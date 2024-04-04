@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ArrayOfProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Product>
+    <Id>50</Id>
+    <Name>молоко</Name>
+    <Price>50000000</Price>
+    <Category>молочка</Category>
+  </Product>
+</ArrayOfProduct>
