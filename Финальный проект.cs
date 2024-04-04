@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace ConsoleApp42
+namespace ConsoleApp44
 {
     public class Product
     {
@@ -12,6 +14,8 @@ namespace ConsoleApp42
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Category { get; set; }
+
+        public Product() { } 
 
         public Product(int id, string name, decimal price, string category)
         {
@@ -55,6 +59,27 @@ namespace ConsoleApp42
         {
             return _products;
         }
+
+        public void SaveToXml(string filePath)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Product>));
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                serializer.Serialize(stream, _products);
+            }
+
+            Console.WriteLine("Данные успешно записаны в XML файл.");
+        }
+
+        public void LoadFromXml(string filePath)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Product>));
+            using (FileStream stream = new FileStream(filePath, FileMode.Open))
+            {
+                _products.Clear();
+                _products.AddRange((List<Product>)serializer.Deserialize(stream));
+            }
+        }
     }
 
     public class Program
@@ -63,12 +88,26 @@ namespace ConsoleApp42
         {
             var productCatalog = new ProductCatalog();
 
-            productCatalog.AddProduct(new Product(1, "Товар 1", 100.0m, "Категорія 1"));
-            productCatalog.AddProduct(new Product(2, "Товар 2", 200.0m, "Категорія 2"));
+            Console.WriteLine("Введите ID товара:");
+            int id = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("Введите название товара:");
+            string name = Console.ReadLine();
+
+            Console.WriteLine("Введите цену товара:");
+            decimal price = Convert.ToDecimal(Console.ReadLine());
+
+            Console.WriteLine("Введите категорию товара:");
+            string category = Console.ReadLine();
+
+            productCatalog.AddProduct(new Product(id, name, price, category));
+
+            productCatalog.SaveToXml("products.xml");
 
             productCatalog.RemoveProduct(1);
-
             productCatalog.EditProduct(2, "Нова назва", 300.0m, "Нова категорія");
+
+            productCatalog.LoadFromXml("products.xml");
 
             var products = productCatalog.GetProducts();
 
